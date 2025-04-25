@@ -1,32 +1,29 @@
 pipeline {
-  
-    agent {
-        label 'Ansible-Node'
-    }
-    
-    tools{
-        maven "Maven-3.9.6"
-    }
-
+    agent any
     stages {
-        stage('Clone') {
+        stage('Clone Repo') {
             steps {
-               git 'https://github.com/ashokitschool/maven-web-app.git'
+                git changelog: false, poll: false, url: 'https://github.com/PruthvirajPhadatare/maven-web-app-new.git'
+            }
+        }
+        stage('Code validation') {
+            steps {
+                sh 'mvn validate'
+            }
+        }
+        stage('Clean Space') {
+            steps {
+                sh 'mvn clean'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
             }
         }
         stage('Build') {
             steps {
-               sh 'mvn clean package'
-            }
-        }
-        
-        stage('Create Image'){
-            steps{
-               steps {
-                	script {
-                		sh 'ansible-playbook task.yml'
-                	}
-                }
+                sh 'mvn clean install'
             }
         }
     }
